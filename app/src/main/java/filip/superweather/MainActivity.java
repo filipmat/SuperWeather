@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
 
     /**
+     * Method in interface AsyncResponse.
      * Called when the AsyncTask for retrieving weather data is finished.
      * Gets the current weather and starts an activity that displays it.
      *
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
 
     /**
-     * Set the text view to display an empty string.
+     * Set the TextView to display an empty string.
      *
      * @param requestCode   Request code.
      * @param resultcode    Result code.

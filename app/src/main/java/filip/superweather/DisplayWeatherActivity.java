@@ -19,6 +19,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
             Bundle bundle = intent.getExtras();
             weather = (Weather) bundle.getSerializable(
                     "weather_serialized");
+
             displayWeather(weather.getForecastString());
             setTitle(weather.getLocationName() + " weather forecast");
 
