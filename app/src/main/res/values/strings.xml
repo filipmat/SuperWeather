@@ -2,4 +2,10 @@
     <string name="app_name">Super Weather</string>
     <string name="weather_button">GET WEATHER</string>
     <string name="retrieving_weather">Retrieving weather data\u2026</string>
+    <string name="stockholm_button">GET STOCKHOLM WEATHER</string>
+    <string name="visby_button">GET VISBY WEATHER</string>
+    <string name="sigtuna_button">GET SIGTUNA WEATHER</string>
+    <string name="stockholm_id">2673730</string>
+    <string name="visby_id">2662689</string>
+    <string name="sigtuna_id">2679302</string>
 </resources>

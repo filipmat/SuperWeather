@@ -161,23 +161,34 @@ public class Weather {
      * @return       	String containing all the information.
      */
     private String getRawData(String urlstr) {
-        String response = "";
+        String response, input;
+        URL url;
+        InputStream stream;
+        HttpURLConnection urlCon;
+        BufferedReader br;
+        StringBuilder builder;
+
         try {
-            URL url = new URL(urlstr);
+            url = new URL(urlstr);
 
-            URLConnection urlcon = url.openConnection();
-            InputStream stream = urlcon.getInputStream();
+            urlCon = (HttpURLConnection) url.openConnection();
 
-            int i;
-            while ((i = stream.read()) != -1) {
-                response = response + (char) i;
+            stream = new BufferedInputStream(urlCon.getInputStream());
+
+            br = new BufferedReader(new InputStreamReader(stream));
+
+            builder = new StringBuilder();
+
+            while ((input = br.readLine()) != null) {
+                builder.append(input);
             }
 
-            stream.close();
+            response = builder.toString();
 
         }
         catch (Exception e) {
             e.printStackTrace();
+            response = "{}";
         }
 
         return response;

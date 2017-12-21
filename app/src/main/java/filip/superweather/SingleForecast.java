@@ -2,6 +2,7 @@ package filip.superweather;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.json.JSONException;
@@ -79,7 +80,7 @@ public class SingleForecast {
         String dateStr;
 
         date = new Date(unixInt*1000L);
-        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.UK);
         sdf.setTimeZone(TimeZone.getDefault());
         dateStr = sdf.format(date);
 
@@ -101,6 +102,7 @@ public class SingleForecast {
 
             forecastDate = dateParts[0];
             forecastTime = dateParts[1];
+            forecastTime = forecastTime.substring(0, 5);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -240,32 +242,36 @@ public class SingleForecast {
 
         str = "";
 
-        str += String.format(
+        str += String.format(Locale.UK,
                 "Date: %s\nTime: %s\n", forecastDate, forecastTime);
 
-        str += String.format(
-                "Weather: %s, %s\n", mainWeather, mainWeatherDescription);
+        str += String.format(Locale.UK,
+                "Weather: %s, %s\n",
+                mainWeather, mainWeatherDescription);
 
-        str += String.format(
+        str += String.format(Locale.UK,
                 "Temperature: %.2f\u00b0C\nHumidity: %.0f%%\nPressure: %.0f hPa\n",
                 temp, humidity, pressure);
 
         if (isWindy) {
-            str += String.format(
+            str += String.format(Locale.UK,
                     "Wind speed: %.1f m/s, direction: %.1f\u00b0\n",
                     windSpeed, windDeg);
         }
 
         if (isSnowy) {
-            str += String.format("Snow 3h: %.1f\n", snow3h);
+            str += String.format(Locale.UK,
+                    "Snow 3h: %.1f\n", snow3h);
         }
 
         if (isRainy) {
-            str += String.format("Rain 3h: %.1f mm\n", rain3h);
+            str += String.format(Locale.UK,
+                    "Rain 3h: %.1f mm\n", rain3h);
         }
 
         if (isCloudy) {
-            str += String.format("Clouds: %.1f%%\n", cloudPercentage);
+            str += String.format(Locale.UK,
+                    "Clouds: %.1f%%\n", cloudPercentage);
         }
 
         return str;

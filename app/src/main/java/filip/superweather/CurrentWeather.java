@@ -4,6 +4,8 @@ package filip.superweather;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 public class CurrentWeather extends SingleForecast {
     private String sunrise, sunset;
     private double visibility;
@@ -31,7 +33,7 @@ public class CurrentWeather extends SingleForecast {
 
         str = getWeatherString();
 
-        str += String.format("Visibility: %.0f\n", visibility);
+        str += String.format(Locale.UK,"Visibility: %.0f\n", visibility);
 
         str += String.format("Sunrise: %s\nSunset: %s\n", sunrise, sunset);
 
