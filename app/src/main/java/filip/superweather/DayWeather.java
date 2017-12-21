@@ -1,19 +1,23 @@
 package filip.superweather;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-class DayWeather {
+class DayWeather implements Serializable{
     private int forecastsAmount;
     private String date, weekday, mainDescription, windDirection, description;
     private double rain, snow, windMax, windAverage, windDegreeAverage,
         temperatureAverage, temperatureMax, temperatureMin;
-    private Map<String, Integer> descriptionCounts;
+    private List<String> descriptions;
+    private List<Integer> descriptionCounts;
+
 
     DayWeather(String date) {
         this.date = date;
@@ -30,7 +34,8 @@ class DayWeather {
         this.temperatureMin = Integer.MAX_VALUE;
 
         this.forecastsAmount = 0;
-        this.descriptionCounts = new HashMap<String, Integer>();
+        this.descriptions = new ArrayList<>();
+        this.descriptionCounts = new ArrayList<>();
     }
 
 
@@ -66,26 +71,29 @@ class DayWeather {
      * @param fc    SingleForecast.
      */
     void addForecast(SingleForecast fc) {
-        Integer count;
+        String dc;
+        int index;
 
         forecastsAmount++;
 
-        count = descriptionCounts.get(fc.getMainWeather());
-        if (count == null) {
-            count = 0;
+        dc = fc.getMainWeather();
+        if (!descriptions.contains(dc)) {
+            descriptions.add(dc);
+            descriptionCounts.add(0);
         }
-        count++;
+        index = descriptions.indexOf(dc);
+        descriptionCounts.set(index, descriptionCounts.get(index) + 1);
 
         rain += fc.getRain3h();
         snow += fc.getSnow3h();
+
         windAverage = newAverage(windAverage, fc.getWindSpeed());
         windMax = Math.max(windMax, fc.getWindSpeed());
         windDegreeAverage = newAverage(windDegreeAverage, fc.getWindDegree());
+
         temperatureAverage = newAverage(temperatureAverage, fc.getTemperature());
         temperatureMax = Math.max(temperatureMax, fc.getTemperature());
         temperatureMin = Math.min(temperatureMin, fc.getTemperature());
-
-        descriptionCounts.put(fc.getMainWeather(), count);
 
     }
 
@@ -113,25 +121,16 @@ class DayWeather {
      * descriptionCounts.
      */
     private void generateMainDescription() {
-        Map.Entry<String, Integer> max;
-        String maxDescription;
+        int max, index;
 
-        max = null;
+        max = Collections.max(descriptionCounts);
+        index = descriptionCounts.indexOf(max);
 
-        for (Map.Entry<String, Integer> entry: descriptionCounts.entrySet()) {
-            if (max == null || entry.getValue().compareTo(max.getValue()) > 0) {
-                max = entry;
-            }
+        try {
+            mainDescription = descriptions.get(index);
+        } catch (Exception e) {
+            mainDescription = "";
         }
-
-        maxDescription = max.getKey();
-        if (maxDescription != null) {
-            mainDescription = maxDescription;
-        }
-        else {
-            mainDescription = "none";
-        }
-
 
     }
 
@@ -145,13 +144,13 @@ class DayWeather {
         description = mainDescription;
 
         description += String.format(Locale.UK,
-                "\nMin %.1f\u00b0C, max %.1f\u00b0C, avg %.1f\u00b0C\n",
+                "\nmin %.1f\u00b0C, max %.1f\u00b0C, avg %.1f\u00b0C\n",
                 temperatureMin, temperatureMax, temperatureAverage);
 
-        if (rain > 0) {
+        if (rain > 0.1) {
             description += String.format(Locale.UK,
                     "rain %.1f mm", rain);
-            if (snow <= 0) {
+            if (snow < 0.1) {
                 description += "\n";
             }
             else {
@@ -159,10 +158,22 @@ class DayWeather {
             }
         }
 
-        if (snow > 0) {
+        if (snow >= 0.1) {
             description += String.format(Locale.UK,
                     "snow %.1f mm\n", snow);
         }
+
+        if (windAverage >= 11) {
+            description += String.format(Locale.UK,
+                    "strong wind: average %.1f m/s\n",
+                    windAverage);
+        }
+        else if (windAverage >= 5.6) {
+            description += String.format(Locale.UK,
+                    "moderate wind: average %.1f m/s\n",
+                    windAverage);
+        }
+
     }
 
 

@@ -8,11 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Weather {
+public class Weather implements Serializable {
     private List<SingleForecast> forecasts;
     private List<DayWeather> dayWeathers;
     private CurrentWeather current;
-    private JSONObject forecastTopLevel, currentTopLevel;
     private String locationName, countryCode;
 
     private static final String SRV = "http://api.openweathermap.org/data/2.5/";
@@ -26,16 +25,16 @@ public class Weather {
     private static final String COUNTRY_ID = "country";
 
     Weather(String cityID) {
+        JSONObject fTopLevel, cTopLevel;
+        cTopLevel = gatherCurrentData(cityID);
+        fTopLevel = gatherForecastData(cityID);
 
-        gatherCurrentData(cityID);
-        gatherForecastData(cityID);
-
-        forecasts = getForecasts();
-        current = new CurrentWeather(currentTopLevel);
+        forecasts = getForecasts(fTopLevel);
+        current = new CurrentWeather(cTopLevel);
 
         dayWeathers = getDayWeathers();
 
-        parseLocation();
+        parseLocation(fTopLevel);
     }
 
 
@@ -92,7 +91,7 @@ public class Weather {
      *
      * @return	ArrayList with SingleForecast objects.
      */
-    private List<SingleForecast> getForecasts() {
+    private List<SingleForecast> getForecasts(JSONObject forecastTopLevel) {
         List<SingleForecast> list;
         JSONArray array;
 
@@ -116,7 +115,7 @@ public class Weather {
     /**
      * Fetches the location name and country code.
      */
-    private void parseLocation() {
+    private void parseLocation(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {
@@ -138,12 +137,15 @@ public class Weather {
      *
      * @param cityID	ID of the city.
      */
-    private void gatherCurrentData(String cityID) {
+    private JSONObject gatherCurrentData(String cityID) {
         String url;
+        JSONObject cTopLevel;
 
         url = getWeatherURL(cityID, WEATHER);
 
-        currentTopLevel = gatherData(url);
+        cTopLevel = gatherData(url);
+
+        return cTopLevel;
 
     }
 
@@ -154,12 +156,15 @@ public class Weather {
      *
      * @param cityID	ID of the city.
      */
-    private void gatherForecastData(String cityID) {
+    private JSONObject gatherForecastData(String cityID) {
         String url;
+        JSONObject fTopLevel;
 
         url = getWeatherURL(cityID, FORECAST);
 
-        forecastTopLevel = gatherData(url);
+        fTopLevel = gatherData(url);
+
+        return fTopLevel;
 
     }
 
@@ -297,9 +302,6 @@ public class Weather {
         StringBuilder sb;
 
         sb = new StringBuilder();
-
-        sb.append(locationName);
-        sb.append(" weather!\n\n");
 
         for (int i = 0; i < dayWeathers.size(); i++) {
             if (i == 0) {

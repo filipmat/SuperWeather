@@ -35,17 +35,20 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
      */
     @Override
     public void processFinish(Weather wh) {
-        String message;
-
         weather = wh;
 
-        //message = weather.getCurrentWeatherString();
-        message = weather.getForecastString();
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("weather_serialized", weather);
+            Intent intent = new Intent(
+                    this, DisplayWeatherActivity.class);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, DISPLAY_WEATHER_REQUEST);
 
-        Intent intent = new Intent(
-                this, DisplayWeatherActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivityForResult(intent, DISPLAY_WEATHER_REQUEST);
+        } catch (Exception e) {
+            TextView textView = findViewById(R.id.textView);
+            textView.setText(e.toString());
+        }
 
     }
 

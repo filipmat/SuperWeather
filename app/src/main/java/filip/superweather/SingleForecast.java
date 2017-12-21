@@ -1,5 +1,6 @@
 package filip.superweather;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -8,13 +9,12 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-class SingleForecast {
+class SingleForecast implements Serializable{
     private String forecastDate, forecastTime, mainWeather,
             mainWeatherDescription;
     private double temperature, humidity, pressure, rain3h, snow3h, windSpeed,
             windDegree, cloudPercentage;
     private boolean isSnowy, isRainy, isWindy, isCloudy;
-    private JSONObject forecastTopLevel;
     private long dtUNIX;
 
     private static final String DT_ID = "dt";
@@ -47,9 +47,7 @@ class SingleForecast {
      */
     SingleForecast(JSONObject forecastTopLevel) {
 
-        this.forecastTopLevel = forecastTopLevel;
-
-        parseWeather();
+        parseWeather(forecastTopLevel);
 
     }
 
@@ -57,14 +55,14 @@ class SingleForecast {
     /**
      * Calls all the weather parsing methods.
      */
-    private void parseWeather() {
-        parseDateTime();
-        parseMain();
-        parseDescription();
-        parseClouds();
-        parseWind();
-        parseRain();
-        parseSnow();
+    private void parseWeather(JSONObject fcTopLevel) {
+        parseDateTime(fcTopLevel);
+        parseMain(fcTopLevel);
+        parseDescription(fcTopLevel);
+        parseClouds(fcTopLevel);
+        parseWind(fcTopLevel);
+        parseRain(fcTopLevel);
+        parseSnow(fcTopLevel);
     }
 
 
@@ -92,7 +90,7 @@ class SingleForecast {
     /**
      * Fetches the date and the time.
      */
-    private void parseDateTime() {
+    private void parseDateTime(JSONObject forecastTopLevel) {
         String dateStr;
         String[] dateParts;
 
@@ -120,7 +118,7 @@ class SingleForecast {
     /**
      * Fetches the temperature, humidity and air pressure.
      */
-    private void parseMain() {
+    private void parseMain(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {
@@ -143,7 +141,7 @@ class SingleForecast {
     /**
      * Fetches the main weather string and the description.
      */
-    private void parseDescription() {
+    private void parseDescription(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {
@@ -164,7 +162,7 @@ class SingleForecast {
     /**
      * Fetches the cloud percentage if available.
      */
-    private void parseClouds() {
+    private void parseClouds(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {
@@ -183,7 +181,7 @@ class SingleForecast {
     /**
      * Fetches the wind speed and the direction if available.
      */
-    private void parseWind() {
+    private void parseWind(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {
@@ -203,7 +201,7 @@ class SingleForecast {
     /**
      * Fetches the rain volume for the last three hours if available.
      */
-    private void parseRain() {
+    private void parseRain(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {
@@ -222,7 +220,7 @@ class SingleForecast {
     /**
      * Fetches the snow volume for the last three hours if available.
      */
-    private void parseSnow() {
+    private void parseSnow(JSONObject forecastTopLevel) {
         JSONObject obj;
 
         try {

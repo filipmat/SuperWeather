@@ -9,15 +9,22 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String message;
+        Weather weather;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
 
-        Intent intent = getIntent();
-        message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        try {
+            Intent intent = this.getIntent();
+            Bundle bundle = intent.getExtras();
+            weather = (Weather) bundle.getSerializable(
+                    "weather_serialized");
+            displayWeather(weather.getForecastString());
+            setTitle(weather.getLocationName() + " weather forecast");
 
-        displayWeather(message);
+        } catch (Exception e) {
+            displayWeather(e.toString());
+        }
     }
 
 

@@ -4,12 +4,12 @@ package filip.superweather;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 public class CurrentWeather extends SingleForecast {
     private String sunrise, sunset;
     private double visibility;
-    private JSONObject currentTopLevel;
 
     private static final String SYS_ID = "sys";
     private static final String VISIBILITY_ID = "visibility";
@@ -20,10 +20,8 @@ public class CurrentWeather extends SingleForecast {
     CurrentWeather(JSONObject currentTopLevel) {
         super(currentTopLevel);
 
-        this.currentTopLevel = currentTopLevel;
-
-        parseSunTimes();
-        parseVisibility();
+        parseSunTimes(currentTopLevel);
+        parseVisibility(currentTopLevel);
 
     }
 
@@ -45,7 +43,7 @@ public class CurrentWeather extends SingleForecast {
     /**
      * Fetches the sunrise and sunset hours.
      */
-    private void parseSunTimes() {
+    private void parseSunTimes(JSONObject currentTopLevel) {
         JSONObject obj;
         String sunriseStr, sunsetStr;
 
@@ -68,7 +66,7 @@ public class CurrentWeather extends SingleForecast {
     /**
      * Fetches the visibility.
      */
-    private void parseVisibility() {
+    private void parseVisibility(JSONObject currentTopLevel) {
         try {
             visibility = currentTopLevel.getDouble(VISIBILITY_ID);
         } catch (JSONException e) {
