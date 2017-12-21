@@ -7,10 +7,13 @@ import android.view.View;
 import android.widget.TextView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse{
     public final static String EXTRA_MESSAGE = "filip.superweather.MESSAGE";
+    static final int DISPLAY_WEATHER_REQUEST = 1;
 
-    private String stockholmID, visbyID, sigtunaID;
+    private Weather weather;
+
+    private GetWeatherHTTP getW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,22 +21,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        stockholmID = "2673730";
-        visbyID = "2662689";
-        sigtunaID = "2679302";
+        getW = new GetWeatherHTTP();
+        getW.delegate = this;
 
     }
 
-/*
-    public void getWeatherCallback(View view) {
+    @Override
+    public void processFinish(Weather wh) {
         String message;
 
-        message = view.getTag().toString();
+        weather = wh;
+
+        message = wh.getCurrentWeatherString();
 
         Intent intent = new Intent(
                 this, DisplayWeatherActivity.class);
         intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
+        startActivityForResult(intent, DISPLAY_WEATHER_REQUEST);
+
     }
-*/
+
+
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultcode, Intent data) {
+
+        if (requestCode == DISPLAY_WEATHER_REQUEST) {
+            TextView textView = findViewById(R.id.textView);
+            textView.setText("");
+        }
+
+    }
+
+
+    public void getWeatherCallback(View view) {
+        String cityID;
+
+        getW = new GetWeatherHTTP();
+        getW.delegate = this;
+
+        cityID = view.getTag().toString();
+
+        TextView textView = findViewById(R.id.textView);
+        textView.setText(R.string.retrieving_weather);
+
+        getW.execute(cityID);
+
+
+    }
+
 }

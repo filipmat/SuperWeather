@@ -3,30 +3,30 @@ package filip.superweather;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
-public class GetWeatherHTTP extends AsyncTask<String, Void, String> {
-    private TextView textView;
+public class GetWeatherHTTP extends AsyncTask<String, Void, Weather> {
     private Weather weather;
 
-    GetWeatherHTTP(TextView textView) {
-        this.textView = textView;
+    public AsyncResponse delegate = null;
+
+    GetWeatherHTTP() {
 
     }
 
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected Weather doInBackground(String... strings) {
 
         weather = new Weather(strings[0]);
 
-        return weather.getCurrentWeatherString();
+        return weather;
 
     }
 
 
     @Override
-    protected void onPostExecute(String weatherStr) {
+    protected void onPostExecute(Weather weather) {
 
-        textView.setText(weatherStr);
+        delegate.processFinish(weather);
     }
 
 }

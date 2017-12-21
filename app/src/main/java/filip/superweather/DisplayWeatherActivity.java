@@ -21,8 +21,17 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         displayWeather(message);
     }
 
-    private void displayWeather(String cityID) {
+    private void displayWeather(String message) {
         TextView textView = findViewById(R.id.textViewWeather);
-        new GetWeatherHTTP(textView).execute(cityID);
+        textView.setText(message);
     }
+
+    @Override
+    public void finish() {
+        Intent data = new Intent();
+
+        setResult(RESULT_OK, data);
+        super.finish();
+    }
+
 }
