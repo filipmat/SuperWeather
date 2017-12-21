@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Super Weather</string>
-    <string name="weather_button">GET WEATHER</string>
     <string name="retrieving_weather">Retrieving weather data\u2026</string>
     <string name="stockholm_button">GET STOCKHOLM WEATHER</string>
     <string name="visby_button">GET VISBY WEATHER</string>

@@ -8,13 +8,14 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SingleForecast {
+class SingleForecast {
     private String forecastDate, forecastTime, mainWeather,
             mainWeatherDescription;
-    private double temp, humidity, pressure, rain3h, snow3h, windSpeed, windDeg,
-            cloudPercentage;
+    private double temperature, humidity, pressure, rain3h, snow3h, windSpeed,
+            windDegree, cloudPercentage;
     private boolean isSnowy, isRainy, isWindy, isCloudy;
     private JSONObject forecastTopLevel;
+    private long dtUNIX;
 
     private static final String DT_ID = "dt";
 
@@ -71,15 +72,15 @@ public class SingleForecast {
      * Converts an UNIX timestamp to readable date and time in the timezone
      * of the device. Returns the time on the format "yyyy-MM-dd HH:MM:ss z".
      *
-     * @param unixInt   UNIX timestamp in seconds.
+     * @param unixLong  UNIX timestamp in seconds.
      * @return          String with timestamp.
      */
-    String dateTimeFromUNIX(int unixInt) {
+    String dateTimeFromUNIX(long unixLong) {
         Date date;
         SimpleDateFormat sdf;
         String dateStr;
 
-        date = new Date(unixInt*1000L);
+        date = new Date(unixLong*1000L);
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.UK);
         sdf.setTimeZone(TimeZone.getDefault());
         dateStr = sdf.format(date);
@@ -96,7 +97,9 @@ public class SingleForecast {
         String[] dateParts;
 
         try {
-            dateStr = dateTimeFromUNIX(forecastTopLevel.getInt(DT_ID));
+            dtUNIX = (long) forecastTopLevel.getInt(DT_ID);
+
+            dateStr = dateTimeFromUNIX(dtUNIX);
 
             dateParts = dateStr.split(" ");
 
@@ -105,6 +108,9 @@ public class SingleForecast {
             forecastTime = forecastTime.substring(0, 5);
 
         } catch (JSONException e) {
+            forecastDate = "0000-00-00";
+            forecastTime = "00:00";
+            dtUNIX = 0;
             e.printStackTrace();
         }
 
@@ -119,12 +125,13 @@ public class SingleForecast {
 
         try {
             obj = forecastTopLevel.getJSONObject(MAIN_ID);
-            temp = obj.getDouble(TEMP_ID) - KELVIN_ZERO;
+
+            temperature = obj.getDouble(TEMP_ID) - KELVIN_ZERO;
             humidity = obj.getDouble(HUMIDITY_ID);
             pressure = obj.getDouble(PRESSURE_ID);
 
         } catch (JSONException e) {
-            temp = 0;
+            temperature = 0;
             humidity = 0;
             pressure = 0;
             e.printStackTrace();
@@ -141,6 +148,7 @@ public class SingleForecast {
 
         try {
             obj = forecastTopLevel.getJSONArray(DESCRIPTION_ID).getJSONObject(0);
+
             mainWeather = obj.getString(MAIN_WEATHER_ID);
             mainWeatherDescription = obj.getString(MAIN_DESCRIPTION_ID);
 
@@ -161,6 +169,7 @@ public class SingleForecast {
 
         try {
             obj = forecastTopLevel.getJSONObject(CLOUDS_ID);
+
             cloudPercentage = obj.getDouble(ALL);
             isCloudy = true;
 
@@ -179,8 +188,9 @@ public class SingleForecast {
 
         try {
             obj = forecastTopLevel.getJSONObject(WIND_ID);
+
             windSpeed = obj.getDouble(WIND_SPEED_ID);
-            windDeg = obj.getDouble(WIND_DEG_ID);
+            windDegree = obj.getDouble(WIND_DEG_ID);
             isWindy = true;
 
         } catch (JSONException e) {
@@ -198,6 +208,7 @@ public class SingleForecast {
 
         try {
             obj = forecastTopLevel.getJSONObject(RAIN_ID);
+
             rain3h = obj.getDouble(H3);
             isRainy = true;
 
@@ -216,6 +227,7 @@ public class SingleForecast {
 
         try {
             obj = forecastTopLevel.getJSONObject(SNOW_ID);
+
             snow3h = obj.getDouble(H3);
             isSnowy = true;
 
@@ -251,12 +263,12 @@ public class SingleForecast {
 
         str += String.format(Locale.UK,
                 "Temperature: %.2f\u00b0C\nHumidity: %.0f%%\nPressure: %.0f hPa\n",
-                temp, humidity, pressure);
+                temperature, humidity, pressure);
 
         if (isWindy) {
             str += String.format(Locale.UK,
                     "Wind speed: %.1f m/s, direction: %.1f\u00b0\n",
-                    windSpeed, windDeg);
+                    windSpeed, windDegree);
         }
 
         if (isSnowy) {
@@ -275,6 +287,67 @@ public class SingleForecast {
         }
 
         return str;
+    }
+
+
+    double getRain3h() {
+        return rain3h;
+    }
+
+    double getSnow3h() {
+        return snow3h;
+    }
+
+    double getWindSpeed() {
+        return windSpeed;
+    }
+
+    double getWindDegree() {
+        return windDegree;
+    }
+
+    String getMainWeather() {
+        return mainWeather;
+    }
+
+    double getTemperature() {
+        return temperature;
+    }
+
+    String getForecastDate() {
+        return forecastDate;
+    }
+
+    String getForecastTime() {
+        return forecastTime;
+    }
+
+    double getHumidity() {
+        return humidity;
+    }
+
+    double getPressure() {
+        return pressure;
+    }
+
+    double getCloudPercentage() {
+        return cloudPercentage;
+    }
+
+    boolean isSnowy() {
+        return isSnowy;
+    }
+
+    boolean isRainy() {
+        return isRainy;
+    }
+
+    boolean isCloudy() {
+        return isCloudy;
+    }
+
+    boolean isWindy() {
+        return isWindy;
     }
 
 }

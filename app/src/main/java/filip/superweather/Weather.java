@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 public class Weather {
     private List<SingleForecast> forecasts;
+    private List<DayWeather> dayWeathers;
     private CurrentWeather current;
     private JSONObject forecastTopLevel, currentTopLevel;
     private String locationName, countryCode;
@@ -32,6 +33,8 @@ public class Weather {
         forecasts = getForecasts();
         current = new CurrentWeather(currentTopLevel);
 
+        dayWeathers = getDayWeathers();
+
         parseLocation();
     }
 
@@ -45,6 +48,38 @@ public class Weather {
      */
     private String getWeatherURL(String cityID, String what) {
         return SRV + what + "?id=" + cityID + "&appid=" + API_KEY;
+    }
+
+
+    /**
+     * Creates DayWeather objects from the 5 day/3 h forecast. All forecasts
+     * from the same date are passed to the same DayWeather object.
+     *
+     * @return  ArrayList with the DayWeather objects.
+     */
+    private List<DayWeather> getDayWeathers() {
+        List<DayWeather> dayWs;
+        String lastDate, fcDate;
+        int count;
+
+        count = -1;
+        lastDate = "";
+        dayWs = new ArrayList<>();
+
+        for (int i = 0; i < forecasts.size(); i++) {
+            fcDate = forecasts.get(i).getForecastDate();
+
+            if (!fcDate.equals(lastDate)) {
+                count++;
+                dayWs.add(new DayWeather(fcDate));
+                lastDate = fcDate;
+            }
+
+            dayWs.get(count).addForecast(forecasts.get(i));
+        }
+
+        return dayWs;
+
     }
 
 
@@ -201,7 +236,7 @@ public class Weather {
      *
      * @return  String.
      */
-    public String getSunrise() {
+    String getSunrise() {
         return current.getSunrise();
     }
 
@@ -211,7 +246,7 @@ public class Weather {
      *
      * @return  String.
      */
-    public String getSunset() {
+    String getSunset() {
         return current.getSunset();
     }
 
@@ -232,10 +267,62 @@ public class Weather {
     }
 
 
+    /**
+     * Returns the weather n days forward, e.g. n = 2 will return the weather
+     * on the day after tomorrow.
+     *
+     * @param n     Which future day to get weather information on.
+     * @return      String with the weather information.
+     */
+    String getWeatherDayN(int n) {
+
+        return null;
+    }
+
+
     @Override
     public String toString() {
         return getCurrentWeatherString();
     }
 
+
+    /**
+     * Returns a formatted string with the weather information for the next
+     * five days.
+     *
+     * @return  String.
+     */
+    String getForecastString() {
+        String str;
+        StringBuilder sb;
+
+        sb = new StringBuilder();
+
+        sb.append(locationName);
+        sb.append(" weather!\n\n");
+
+        for (int i = 0; i < dayWeathers.size(); i++) {
+            if (i == 0) {
+                str = "Today";
+            }
+            else if (i == 1) {
+                str = "Tomorrow";
+            }
+            else {
+                str = dayWeathers.get(i).getWeekday();
+            }
+            str += ":";
+            sb.append(String.format("%1$-10s", str));
+
+            sb.append(dayWeathers.get(i).toString());
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    String getLocationName() {
+        return locationName;
+    }
 }
 

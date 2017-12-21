@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse{
     public final static String EXTRA_MESSAGE = "filip.superweather.MESSAGE";
-    static final int DISPLAY_WEATHER_REQUEST = 1;
+    private static final int DISPLAY_WEATHER_REQUEST = 1;
 
     private Weather weather;
 
@@ -26,13 +26,21 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
     }
 
+
+    /**
+     * Called when the AsyncTask for retrieving weather data is finished.
+     * Gets the current weather and starts an activity that displays it.
+     *
+     * @param wh    Weather object.
+     */
     @Override
     public void processFinish(Weather wh) {
         String message;
 
         weather = wh;
 
-        message = wh.getCurrentWeatherString();
+        //message = weather.getCurrentWeatherString();
+        message = weather.getForecastString();
 
         Intent intent = new Intent(
                 this, DisplayWeatherActivity.class);
@@ -42,6 +50,13 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     }
 
 
+    /**
+     * Set the text view to display an empty string.
+     *
+     * @param requestCode   Request code.
+     * @param resultcode    Result code.
+     * @param data          Intent data.
+     */
     @Override
     protected void onActivityResult(
             int requestCode, int resultcode, Intent data) {
@@ -54,19 +69,22 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
     }
 
 
+    /**
+     * Called when pressing a weather button. Gets weather information.
+     *
+     * @param view  The pressed button.
+     */
     public void getWeatherCallback(View view) {
         String cityID;
-
-        getW = new GetWeatherHTTP();
-        getW.delegate = this;
-
-        cityID = view.getTag().toString();
 
         TextView textView = findViewById(R.id.textView);
         textView.setText(R.string.retrieving_weather);
 
-        getW.execute(cityID);
+        cityID = view.getTag().toString();
 
+        getW = new GetWeatherHTTP();
+        getW.delegate = this;
+        getW.execute(cityID);
 
     }
 
