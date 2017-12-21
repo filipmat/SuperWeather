@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+/*
     public void getWeatherCallback(View view) {
         String message;
 
@@ -35,5 +35,5 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
-
+*/
 }
