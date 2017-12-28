@@ -1,12 +1,19 @@
 package filip.superweather;
 
+import android.content.Context;
 import android.os.AsyncTask;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 class GetWeatherHTTP extends AsyncTask<String, Void, Weather> {
     AsyncResponse delegate = null;
+    Context context;
 
-    GetWeatherHTTP() {
-
+    GetWeatherHTTP(Context context) {
+        this.context = context;
     }
 
 
@@ -19,11 +26,47 @@ class GetWeatherHTTP extends AsyncTask<String, Void, Weather> {
     @Override
     protected Weather doInBackground(String... strings) {
         Weather weather;
+        String apiKey;
 
-        weather = new Weather(strings[0]);
+        apiKey = getAPIKey();
+
+        weather = new Weather(strings[0], apiKey);
 
         return weather;
 
+    }
+
+
+    private String getAPIKey() {
+        String key;
+        Properties prop;
+        InputStream input;
+
+        prop = new Properties();
+        input = null;
+        key = "";
+
+        try {
+            input = context.getAssets().open("config.properties");
+
+            prop.load(input);
+
+            key = prop.getProperty("apikey");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return key;
+
+        }
     }
 
 

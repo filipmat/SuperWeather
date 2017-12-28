@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getW = new GetWeatherHTTP();
+        getW = new GetWeatherHTTP(this);
         getW.delegate = this;
 
     }
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse{
 
         cityID = view.getTag().toString();
 
-        getW = new GetWeatherHTTP();
+        getW = new GetWeatherHTTP(this);
         getW.delegate = this;
         getW.execute(cityID);
 

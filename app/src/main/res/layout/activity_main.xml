@@ -11,12 +11,6 @@
     tools:context="filip.superweather.MainActivity">
 
 
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="39dp" />
-
     <Button
         android:id="@+id/stockholm_button"
         android:layout_width="270dp"
@@ -46,5 +40,10 @@
         android:onClick="getWeatherCallback"
         android:tag="@string/sigtuna_id"
         android:text="@string/sigtuna_button"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="39dp" />
 
 </LinearLayout>

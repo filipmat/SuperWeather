@@ -139,6 +139,7 @@ class DayWeather implements Serializable{
      * Generates the description of the day forecast.
      */
     private void generateDescription() {
+        // TODO: Make methods for temperature, snow, wind etc.
         generateMainDescription();
 
         description = mainDescription;

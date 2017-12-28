@@ -1,5 +1,7 @@
 package filip.superweather;
 
+import android.content.Context;
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -12,7 +14,7 @@ public class Weather implements Serializable {
     private List<SingleForecast> forecasts;
     private List<DayWeather> dayWeathers;
     private CurrentWeather current;
-    private String locationName, countryCode;
+    private String locationName, countryCode, apiKey;
 
     private static final String SRV = "http://api.openweathermap.org/data/2.5/";
     private static final String API_KEY = "cfb479cde26c179e7443b3942057de84";
@@ -24,10 +26,12 @@ public class Weather implements Serializable {
     private static final String NAME_ID = "name";
     private static final String COUNTRY_ID = "country";
 
-    Weather(String cityID) {
+    Weather(String cityID, String apiKey) {
         JSONObject fTopLevel, cTopLevel;
         cTopLevel = gatherCurrentData(cityID);
         fTopLevel = gatherForecastData(cityID);
+
+        this.apiKey = apiKey;
 
         forecasts = getForecasts(fTopLevel);
         current = new CurrentWeather(cTopLevel);
@@ -46,7 +50,8 @@ public class Weather implements Serializable {
      * @return			Complete URL string.
      */
     private String getWeatherURL(String cityID, String what) {
-        return SRV + what + "?id=" + cityID + "&appid=" + API_KEY;
+
+        return SRV + what + "?id=" + cityID + "&appid=" + apiKey;
     }
 
 
@@ -149,6 +154,15 @@ public class Weather implements Serializable {
 
     }
 
+
+    String getCurl() {
+        String url, rawData;
+        JSONObject cTopLevel;
+
+        url = getWeatherURL("2673730", WEATHER);
+        rawData = getRawData(url);
+        return rawData;
+    }
 
     /**
      * Gathers the forecast data. The data is put in the JSONObject
@@ -298,6 +312,7 @@ public class Weather implements Serializable {
      * @return  String.
      */
     String getForecastString() {
+        // TODO: Make method for day: return today, tommorrow, or weekday.
         String str;
         StringBuilder sb;
 
@@ -325,6 +340,10 @@ public class Weather implements Serializable {
 
     String getLocationName() {
         return locationName;
+    }
+
+    String getApiKey() {
+        return apiKey;
     }
 }
 
