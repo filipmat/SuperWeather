@@ -17,7 +17,6 @@ public class Weather implements Serializable {
     private String locationName, countryCode, apiKey;
 
     private static final String SRV = "http://api.openweathermap.org/data/2.5/";
-    private static final String API_KEY = "cfb479cde26c179e7443b3942057de84";
     private static final String FORECAST = "forecast";
     private static final String WEATHER = "weather";
 
@@ -28,10 +27,11 @@ public class Weather implements Serializable {
 
     Weather(String cityID, String apiKey) {
         JSONObject fTopLevel, cTopLevel;
-        cTopLevel = gatherCurrentData(cityID);
-        fTopLevel = gatherForecastData(cityID);
 
         this.apiKey = apiKey;
+
+        cTopLevel = gatherCurrentData(cityID);
+        fTopLevel = gatherForecastData(cityID);
 
         forecasts = getForecasts(fTopLevel);
         current = new CurrentWeather(cTopLevel);
@@ -154,15 +154,6 @@ public class Weather implements Serializable {
 
     }
 
-
-    String getCurl() {
-        String url, rawData;
-        JSONObject cTopLevel;
-
-        url = getWeatherURL("2673730", WEATHER);
-        rawData = getRawData(url);
-        return rawData;
-    }
 
     /**
      * Gathers the forecast data. The data is put in the JSONObject
@@ -342,8 +333,5 @@ public class Weather implements Serializable {
         return locationName;
     }
 
-    String getApiKey() {
-        return apiKey;
-    }
 }
 

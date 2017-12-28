@@ -20,8 +20,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
             weather = (Weather) bundle.getSerializable(
                     "weather_serialized");
 
-            //displayWeather(weather.getForecastString());
-            displayWeather(weather.getCurl());
+            displayWeather(weather.getForecastString());
             setTitle(weather.getLocationName() + " weather forecast");
 
         } catch (Exception e) {

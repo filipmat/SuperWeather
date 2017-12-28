@@ -3,12 +3,13 @@ package filip.superweather;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 class GetWeatherHTTP extends AsyncTask<String, Void, Weather> {
+    private static final String CONFIG_FILENAME = "config.properties";
+    private static final String API_KEY_PROPERTY = "apikey";
     AsyncResponse delegate = null;
     Context context;
 
@@ -37,6 +38,11 @@ class GetWeatherHTTP extends AsyncTask<String, Void, Weather> {
     }
 
 
+    /**
+     * Get the API key from config.properties in assets.
+     *
+     * @return  String with API key.
+     */
     private String getAPIKey() {
         String key;
         Properties prop;
@@ -47,11 +53,11 @@ class GetWeatherHTTP extends AsyncTask<String, Void, Weather> {
         key = "";
 
         try {
-            input = context.getAssets().open("config.properties");
+            input = context.getAssets().open(CONFIG_FILENAME);
 
             prop.load(input);
 
-            key = prop.getProperty("apikey");
+            key = prop.getProperty(API_KEY_PROPERTY);
 
         } catch (IOException e) {
             e.printStackTrace();
