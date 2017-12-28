@@ -1,7 +1,5 @@
 package filip.superweather;
 
-import android.content.Context;
-
 import java.net.*;
 import java.io.*;
 import java.util.*;
